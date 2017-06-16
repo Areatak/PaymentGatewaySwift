@@ -9,7 +9,7 @@
 import UIKit
 import StompClient
 
-class CoinGateway: NSObject, StompClientDelegate {
+open class CoinGateway: NSObject, StompClientDelegate {
 	let apiKey: String
 	let uuid: String
 	let url = URL(string: "http://localhost:8080/paymentRequest")
@@ -32,14 +32,14 @@ class CoinGateway: NSObject, StompClientDelegate {
 		NotificationCenter.default.removeObserver(self)
 	}
 	
-	func request(coinType: CoinTypes, amount: Int, shareId: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
+	open func request(coinType: CoinTypes, amount: Int, shareId: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
 		var request = URLRequest(url: url!)
 		request.httpMethod = "POST"
 		request.httpBody = String(format: postString, apiKey, coinType.rawValue, amount, shareId, uuid).data(using: .utf8)
 		session.dataTask(with: request, completionHandler: completionHandler)
 		
 	}
-	func request(coinType: CoinTypes, amount: Int, shareId: String, viewController: UIViewController) {
+	open func request(coinType: CoinTypes, amount: Int, shareId: String, viewController: UIViewController) {
 		var request = URLRequest(url: url!)
 		request.httpMethod = "POST"
 		request.httpBody = String(format: postString, apiKey, coinType.rawValue, amount, shareId, uuid).data(using: .utf8)
