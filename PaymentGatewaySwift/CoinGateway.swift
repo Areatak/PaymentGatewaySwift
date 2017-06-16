@@ -12,8 +12,8 @@ import StompClient
 open class CoinGateway: NSObject {
 	let apiKey: String
 	let uuid: String
-	let url = URL(string: "http://localhost:8080/paymentRequest")
-	let stompUrl = URL(string: "http://localhost:8080/listen")
+	let url = URL(string: "http://192.168.1.5:8080/paymentRequest")
+	let stompUrl = URL(string: "http://192.168.1.5:8080/listen")
 	let session = URLSession(configuration: .default)
 	let postString = "apiKey=%@&coin=%@&amount=%d&shareId=%@&mode=IOS&stomp=%@"
 	
@@ -42,8 +42,9 @@ open class CoinGateway: NSObject {
 	open func request(coinType: CoinTypes, amount: Int, shareId: String, viewController: UIViewController) {
 		var request = URLRequest(url: url!)
 		request.httpMethod = "POST"
+		request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 		request.httpBody = String(format: postString, apiKey, coinType.rawValue, amount, shareId, uuid).data(using: .utf8)
-		session.dataTask(with: request) { (data, response, error) in
+		let task = session.dataTask(with: request) { (data, response, error) in
 			if error == nil {
 				if (response as! HTTPURLResponse).statusCode == 200 {
 					if let map = try! JSONSerialization.jsonObject(with: data!, options: []) as? [String: Any] {
@@ -53,7 +54,10 @@ open class CoinGateway: NSObject {
 						let amount = map["amount"] as! Int
 						let url = map["url"] as! String
 						let qr = map["qr"] as! String
-						let controller = UIStoryboard(name: "Gateway", bundle: nil).instantiateViewController(withIdentifier: "GatewayViewController") as! GatewayViewController
+						let podBundle = Bundle(for: CoinGateway.self)
+						let bundleURL = podBundle.url(forResource: "PaymentGatewaySwift", withExtension: "bundle")
+						let bundle = Bundle(url: bundleURL!)!
+						let controller = UIStoryboard(name: "Gateway", bundle: bundle).instantiateViewController(withIdentifier: "GatewayViewController") as! GatewayViewController
 						controller.shareId = shareId
 						controller.seq = seq
 						controller.address = address
@@ -66,6 +70,7 @@ open class CoinGateway: NSObject {
 				}
 			}
 		}
+		task.resume()
 		
 	}
 	
