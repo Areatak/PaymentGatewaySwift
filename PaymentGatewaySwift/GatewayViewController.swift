@@ -21,7 +21,7 @@ class GatewayViewController: UIViewController {
 	var waitTitle: String = "Wait"
 	var confirmTitle: String = "Confirmed"
 	var notConfirmTitle: String = "Not Confirmed Yet"
-	var font = UIFont.systemFont(ofSize: 14)
+	var font = UIFont.systemFont(ofSize: 15)
 	
 	
 	
