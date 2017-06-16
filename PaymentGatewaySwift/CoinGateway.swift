@@ -9,7 +9,7 @@
 import UIKit
 import StompClient
 
-open class CoinGateway: NSObject, StompClientDelegate {
+open class CoinGateway: NSObject {
 	let apiKey: String
 	let uuid: String
 	let url = URL(string: "http://localhost:8080/paymentRequest")
@@ -17,13 +17,13 @@ open class CoinGateway: NSObject, StompClientDelegate {
 	let session = URLSession(configuration: .default)
 	let postString = "apiKey=%@&coin=%@&amount=%d&shareId=%@&mode=IOS&stomp=%@"
 	
-	required init(_ apiKey: String) {
+	required public init(_ apiKey: String) {
 		self.apiKey = apiKey
 		self.uuid = UUID().uuidString
 		super.init()
 		let client = StompClient(url: stompUrl!)
 		_ = client.subscribe("/user/" + uuid + "/queue/received")
-		client.delegate = self
+		client.delegate = StompListener()
 		client.connect()
 		
 		
@@ -69,6 +69,10 @@ open class CoinGateway: NSObject, StompClientDelegate {
 		
 	}
 	
+	
+	
+}
+class StompListener: NSObject, StompClientDelegate {
 	func stompClientDidConnected(_ client: StompClient) {
 		
 	}
@@ -88,7 +92,4 @@ open class CoinGateway: NSObject, StompClientDelegate {
 		
 		
 	}
-	
-	
-	
 }

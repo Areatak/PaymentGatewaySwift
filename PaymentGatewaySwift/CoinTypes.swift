@@ -7,7 +7,7 @@
 //
 
 import Foundation
-enum CoinTypes: String {
+public enum CoinTypes: String {
 	case Bitcoin
 	case Utabit
 }
